@@ -1,8 +1,22 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "./Header";
+import { checkValidateData } from "../utils/validate";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  const email = useRef(null);
+  const password = useRef(null);
+
+  const handleButtonClick = () => {
+    const errorMsg = checkValidateData(
+      email.current.value,
+      password.current.value
+    );
+
+    setErrorMsg(errorMsg);
+  };
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
@@ -17,7 +31,10 @@ const Login = () => {
           alt="netflix-banner"
         />
       </div>
-      <form className="absolute p-10 w-3/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black text-white bg-opacity-80">
+      <form
+        className="absolute p-10 w-3/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black text-white bg-opacity-80"
+        onClick={(e) => e.preventDefault()}
+      >
         <h1 className="p-2 m-2 font-bold text-3xl py-4">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
@@ -30,18 +47,24 @@ const Login = () => {
         )}
         <input
           type="text"
+          ref={email}
           placeholder="Email"
           className="p-2 m-2 w-full bg-gray-500"
         />
         <input
           type="password"
+          ref={password}
           placeholder="password"
           className="p-2 m-2 w-full bg-gray-500"
         />
-        <button className="p-2 m-2 bg-red-800 w-full rounded-lg">
+        <button
+          className="p-2 m-2 bg-red-800 w-full rounded-lg"
+          onClick={handleButtonClick}
+        >
           Sign In
         </button>
-        <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
+        <p className="text-red-500 p-2 m-2">{errorMsg}</p>
+        <p className="py-4 cursor-pointer p-2 m-2" onClick={toggleSignInForm}>
           {isSignInForm
             ? " New to Netflix ? Sign Up Now"
             : " Already registered? Sign In Now"}
