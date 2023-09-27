@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidateData } from "../utils/validate";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -16,6 +18,28 @@ const Login = () => {
     );
 
     setErrorMsg(errorMsg);
+
+    if (errorMsg) return;
+
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ..
+        });
+    } else {
+    }
   };
 
   const toggleSignInForm = () => {
@@ -61,7 +85,7 @@ const Login = () => {
           className="p-2 m-2 bg-red-800 w-full rounded-lg"
           onClick={handleButtonClick}
         >
-          Sign In
+          {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
         <p className="text-red-500 p-2 m-2">{errorMsg}</p>
         <p className="py-4 cursor-pointer p-2 m-2" onClick={toggleSignInForm}>
